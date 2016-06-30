@@ -2,9 +2,9 @@
 // - bool ? BrewerysList : BrewerySeach
 
 
-// if showBeer clicked 
+// if showBeer clicked
 //    displayBeer
-// else 
+// else
 //    display FindBeer
 
 class BeerApp extends React.Component {
@@ -16,10 +16,44 @@ class BeerApp extends React.Component {
     };
   }
 
-  _onClickfindBeersGPS() {
-    this.setState({ showBeerResults: true})
+  componentWillMount() {
+    // Invoked once, both on the client and server, immediately before the initial rendering occurs.
+    this._nearMe();
   }
 
+  _getLocation() {
+    this.setState({ showBeerResults: true});
+
+    if('geolocation' in navigator) {
+      requestLocation();
+    } else {
+      console.log("Browser doesn't support geolocation");
+    }
+
+    function requestLocation() {
+
+      var options = {enableHighAccuracy: false, timeout: 5000, maximumAge: 0};
+
+      navigator.geolocation.getCurrentPosition(success, error, options);
+
+      function success(pos) {
+        var long = pos.coords.longitude;
+        var lat = pos.coords.latitude;
+
+        getBreweryFromLatLong(lat, long).then(function(json) {
+          console.log(json);
+        });
+
+        console.log("long", long, "Lat", lat);
+      }
+      var error = err => console.log(err);
+    }
+  }
+
+
+  _nearMe() {
+    // call geo location
+  }
 
   render() {
     //  { this.state.showResults ? <Results /> : null }
@@ -47,13 +81,13 @@ constructor(props) {
   }
 
   componentWillMount() {
-    // Invoked once, both on the client and server, immediately before the initial rendering occurs. 
-    this._fetchBrewerys();
+    // Invoked once, both on the client and server, immediately before the initial rendering occurs.
+    this._fetchBrewerysByLocation();
   }
 
   render() {
     const brewerysComponents = this._createBreweryComponents();
-    
+
     return (
         <div>
           <h1 className="text-center">Local Brewerys</h1>
@@ -64,7 +98,7 @@ constructor(props) {
       )
   }
 
-  _fetchBrewerys() {
+  _fetchBrewerysByLocation() {
     $.ajax({
       url: '/api/comments',
       dataType: 'json',
@@ -84,7 +118,10 @@ constructor(props) {
 
     //console.log(beer.brewery);
 
-    return this.state.brewerys.filter(beer => beer.streetAddress && beer.openToPublic == "Y" && beer.locationType != "office").map(beer => {
+    // if(b.brewery.images) { brewery.icon = b.brewery.images.icon; }
+    var icons = this.state.brewerys.filter(beer => beer.brewery.images);
+    console.log(icons.map(beer => beer.brewery.images.icon).length)
+    return this.state.brewerys.filter(beer => beer.streetAddress && beer.openToPublic == "Y" && beer.locationType != "office" && beer.brewery.images).map(beer => {
       return <BreweryItem
         key={Math.random()}
         name={beer.brewery.name}
@@ -92,6 +129,7 @@ constructor(props) {
         zipcode={beer.postalCode}
         distance={beer.distance}
         type={beer.locationType}
+        icon={beer.brewery.images.icon}
       />
     });
   }
@@ -100,12 +138,19 @@ constructor(props) {
 class BreweryItem extends React.Component {
   render() {
     return (
-        <a  className="list-group-item">
-           <h4 className="list-group-item-heading">{this.props.name}</h4>
-           <p className="list-group-item-text">{this.props.type}</p>
-           <p className="list-group-item-text">{this.props.address + ', ' + this.props.zipcode }</p>
-           <p className="list-group-item-text">{`${this.props.distance} miles away`}</p>
-        </a>
+
+           <a  className="list-group-item">
+
+              <span className="pull-left">
+                <img  src={this.props.icon} alt="..."/>
+              </span>
+
+              <h4 className="list-group-item-heading">{this.props.name}</h4>
+              <p className="list-group-item-text">{this.props.type}</p>
+              <p className="list-group-item-text">{this.props.address + ', ' + this.props.zipcode }</p>
+              <p className="list-group-item-text">{`${this.props.distance} miles away`}</p>
+           </a>
+
       )
   }
 }
@@ -113,10 +158,12 @@ class BreweryItem extends React.Component {
 class BrewerySearchView extends BeerApp {
   render() {
     return (
-      <div></div>
+      <div>Near Me</div>
       )
   }
 }
+
+
 
 
 ReactDOM.render( < BeerApp / > , document.getElementById('app'));
