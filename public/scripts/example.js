@@ -1,6 +1,3 @@
-var express = require('express');
-var app = express();
-
 class BeerApp extends React.Component {
 
   constructor(props) {
@@ -24,8 +21,6 @@ class BeerApp extends React.Component {
   }
 }
 
-
-
 class BreweryListView extends React.Component {
 
 constructor(props) {
@@ -39,7 +34,6 @@ constructor(props) {
 
   componentWillMount() {
     // Invoked once, both on the client and server, immediately before the initial rendering occurs.
-    //this._fetchBrewerysByLocation();
     this._getLocation();
   }
 
@@ -89,8 +83,8 @@ constructor(props) {
 
   _fetchBrewerysByLocation() {
     $.ajax({
-      url: '/api/comments',
-      //url: `http://api.brewerydb.com/v2/search/geo/point?radius=25&lat=${this.state.latitude}&lng=${this.state.longitude}&key=a3112121a853b5030fb64addbc45e14a&callback=JSON_CALLBACK`,
+      //url: '/api/comments',
+      url: `http://api.brewerydb.com/v2/search/geo/point?radius=25&lat=${this.state.latitude}&lng=${this.state.longitude}&key=a3112121a853b5030fb64addbc45e14a&callback=JSON_CALLBACK`,
       dataType: 'json',
       cache: false,
       success: (Data) => {
@@ -106,13 +100,9 @@ constructor(props) {
 
 
   _createBreweryComponents() {
-    //var brewerysNameList = this.state.brewerys.filter(beer => beer.brewery.images)//.map(beer => [beer.brewery.name, beer.streetAddress, beer.postalCode]);
-    //var beer = this.state.brewerys[3];
-
-    //console.log(beer.brewery);
 
     // if(b.brewery.images) { brewery.icon = b.brewery.images.icon; }
-    console.log("_createBreweryComponents")
+    console.log("_createBreweryComponents");
     //var icons = this.state.brewerys.filter(beer => beer.brewery.images);
     //console.log(icons.map(beer => beer.brewery.images.icon).length)
     return this.state.brewerys.filter(beer => beer.streetAddress && beer.openToPublic == "Y" && beer.locationType != "office" && beer.brewery.images).map(beer => {
@@ -128,8 +118,6 @@ constructor(props) {
     });
   }
 }
-// make post req to server
-
 
 class BreweryItem extends React.Component {
   render() {
