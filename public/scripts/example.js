@@ -91,9 +91,7 @@ constructor(props) {
     return (
         <div>
           <h1 className="text-center">Local Brewerys</h1>
-          <div className="breweryList list-group text-center well">
             {brewerysComponents}
-          </div>
         </div>
       )
   }
@@ -138,22 +136,29 @@ constructor(props) {
 class BreweryItem extends React.Component {
   render() {
     return (
+      <div>
+        <div className="panel panel-default">
+            <div className="panel-heading">
+                <h3 className="panel-title">{this.props.name}
+                  <span className="distance pull-right">{`${this.props.distance} miles`}</span>
 
-           <a  className="list-group-item">
+                </h3>
 
-              <span className="pull-left">
-                <img  src={this.props.icon} alt="..."/>
-              </span>
+              </div>
+              <div className="panel-body">
+                  <span className="pull-left">
+                    <img  src={this.props.icon} alt="..."/>
+                  </span>
 
-              <h4 className="list-group-item-heading">{this.props.name}</h4>
-              <p className="list-group-item-text">{this.props.type}</p>
-              <p className="list-group-item-text">{this.props.address + ', ' + this.props.zipcode }</p>
-              <p className="list-group-item-text">{`${this.props.distance} miles away`}</p>
-           </a>
 
+                  <p className="list-group-item-text text-center">{this.props.address + ', ' + this.props.zipcode }</p>
+              </div>
+          </div>
+      </div>
       )
   }
 }
+
 
 class BrewerySearchView extends BeerApp {
   render() {

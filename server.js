@@ -28,8 +28,8 @@ app.use(function(req, res, next) {
 // http://api.brewerydb.com/v2/search/geo/point?radius=25&lat=30.2687782&lng=-97.7411321&key=a3112121a853b5030fb64addbc45e14a
 
 // locationType
-// DONT INCLUDE "locationType": "restaurant", 
-// "locationType": "office" 
+// DONT INCLUDE "locationType": "restaurant",
+// "locationType": "office"
 //"openToPublic": "Y"
 // micro,macro,nano,prewpub,production,office,tasting,restaurant,cidery,meadery
 
