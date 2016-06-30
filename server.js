@@ -43,6 +43,19 @@ app.get('/api/comments', function(req, res) {
   });
 });
 
+app.get('/api/comments', function(req, res) {
+  $.ajax({
+    url: `http://api.brewerydb.com/v2/search/geo/point?radius=25&lat=${this.state.latitude}&lng=${this.state.longitude}&key=a3112121a853b5030fb64addbc45e14a&callback=JSON_CALLBACK`,
+    dataType: 'json',
+    cache: false,
+    success: (Data) => {
+      console.log("DATA", Data)
+      res.json(Data.data);
+    },
+    error: err => console.log(err)
+  });
+});
+
 
 app.listen(app.get('port'), function() {
   console.log('Server started: http://localhost:' + app.get('port') + '/');

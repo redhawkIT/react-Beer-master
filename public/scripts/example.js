@@ -1,11 +1,5 @@
-// - BeerApp
-// - bool ? BrewerysList : BrewerySeach
-
-
-// if showBeer clicked
-//    displayBeer
-// else
-//    display FindBeer
+var express = require('express');
+var app = express();
 
 class BeerApp extends React.Component {
 
@@ -14,45 +8,6 @@ class BeerApp extends React.Component {
     this.state = {
       showBeerResults: false
     };
-  }
-
-  componentWillMount() {
-    // Invoked once, both on the client and server, immediately before the initial rendering occurs.
-    this._nearMe();
-  }
-
-  _getLocation() {
-    this.setState({ showBeerResults: true});
-
-    if('geolocation' in navigator) {
-      requestLocation();
-    } else {
-      console.log("Browser doesn't support geolocation");
-    }
-
-    function requestLocation() {
-
-      var options = {enableHighAccuracy: false, timeout: 5000, maximumAge: 0};
-
-      navigator.geolocation.getCurrentPosition(success, error, options);
-
-      function success(pos) {
-        var long = pos.coords.longitude;
-        var lat = pos.coords.latitude;
-
-        getBreweryFromLatLong(lat, long).then(function(json) {
-          console.log(json);
-        });
-
-        console.log("long", long, "Lat", lat);
-      }
-      var error = err => console.log(err);
-    }
-  }
-
-
-  _nearMe() {
-    // call geo location
   }
 
   render() {
@@ -76,13 +31,16 @@ class BreweryListView extends React.Component {
 constructor(props) {
     super(props);
     this.state = {
-      brewerys: []
+      brewerys: [],
+      longitude: null,
+      latitude: null
     };
   }
 
   componentWillMount() {
     // Invoked once, both on the client and server, immediately before the initial rendering occurs.
-    this._fetchBrewerysByLocation();
+    //this._fetchBrewerysByLocation();
+    this._getLocation();
   }
 
   render() {
@@ -96,19 +54,56 @@ constructor(props) {
       )
   }
 
+  _getLocation() {
+    //this.setState({ showBeerResults: true});
+
+    if('geolocation' in navigator) {
+      this._requestLocation();
+    } else {
+      console.log("Browser doesn't support geolocation");
+    }
+  }
+
+  _requestLocation() {
+
+    var options = {enableHighAccuracy: false, timeout: 5000, maximumAge: 0};
+
+    navigator.geolocation.getCurrentPosition(this._success.bind(this), error, options);
+
+
+    var error = err => console.log(err);
+  }
+
+  _success(pos) {
+    var long = pos.coords.longitude;
+    var lat = pos.coords.latitude;
+
+    console.log("long", long, "Lat", lat);
+    this.setState({latitude: lat, longitude: long})
+    //debugger
+
+    // send location data server
+    this._fetchBrewerysByLocation(); // change to promise
+
+  }
+
   _fetchBrewerysByLocation() {
     $.ajax({
       url: '/api/comments',
+      //url: `http://api.brewerydb.com/v2/search/geo/point?radius=25&lat=${this.state.latitude}&lng=${this.state.longitude}&key=a3112121a853b5030fb64addbc45e14a&callback=JSON_CALLBACK`,
       dataType: 'json',
       cache: false,
       success: (Data) => {
+        console.log("DATA", Data)
         this.setState({
           brewerys: Data.data
         });
       },
-      error: err => console.log(err.toString())
+      error: err => console.log(err)
     });
   }
+
+
 
   _createBreweryComponents() {
     //var brewerysNameList = this.state.brewerys.filter(beer => beer.brewery.images)//.map(beer => [beer.brewery.name, beer.streetAddress, beer.postalCode]);
@@ -117,8 +112,9 @@ constructor(props) {
     //console.log(beer.brewery);
 
     // if(b.brewery.images) { brewery.icon = b.brewery.images.icon; }
-    var icons = this.state.brewerys.filter(beer => beer.brewery.images);
-    console.log(icons.map(beer => beer.brewery.images.icon).length)
+    console.log("_createBreweryComponents")
+    //var icons = this.state.brewerys.filter(beer => beer.brewery.images);
+    //console.log(icons.map(beer => beer.brewery.images.icon).length)
     return this.state.brewerys.filter(beer => beer.streetAddress && beer.openToPublic == "Y" && beer.locationType != "office" && beer.brewery.images).map(beer => {
       return <BreweryItem
         key={Math.random()}
@@ -132,27 +128,18 @@ constructor(props) {
     });
   }
 }
+// make post req to server
+
 
 class BreweryItem extends React.Component {
   render() {
     return (
       <div>
-        <div className="panel panel-default">
-            <div className="panel-heading">
-                <h3 className="panel-title">{this.props.name}
-                  <span className="distance pull-right">{`${this.props.distance} miles`}</span>
-
-                </h3>
-
-              </div>
-              <div className="panel-body">
-                  <span className="pull-left">
-                    <img  src={this.props.icon} alt="..."/>
-                  </span>
-
-
-                  <p className="list-group-item-text text-center">{this.props.address + ', ' + this.props.zipcode }</p>
-              </div>
+          <div className="list-group breweryList">
+                  <a className="list-group-item" href="#">
+                    {this.props.name}
+                    <span className="distance pull-right">{`${this.props.distance} miles`}</span>
+                  </a>
           </div>
       </div>
       )
