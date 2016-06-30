@@ -12,13 +12,8 @@ class BeerApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      brewerys: [],
       showBeerResults: false
     };
-  }
-
-  componentWillMount() {
-    this._fetchBrewerys();
   }
 
   _onClickfindBeersGPS() {
@@ -27,20 +22,46 @@ class BeerApp extends React.Component {
 
 
   render() {
-    const brewerysComponents = this._createBreweryComponents();
     //  { this.state.showResults ? <Results /> : null }
     return (
       <div className="container">
           <div className="row">
               <div className="col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6">
-                  <h1 className="text-center">Local Brewerys</h1>
-                  <div className="breweryList list-group text-center well">
-                    {brewerysComponents}
-                  </div>
+                  <BreweryListView/>
               </div>
           </div>
       </div>
     )
+  }
+}
+
+
+
+class BreweryListView extends React.Component {
+
+constructor(props) {
+    super(props);
+    this.state = {
+      brewerys: []
+    };
+  }
+
+  componentWillMount() {
+    // Invoked once, both on the client and server, immediately before the initial rendering occurs. 
+    this._fetchBrewerys();
+  }
+
+  render() {
+    const brewerysComponents = this._createBreweryComponents();
+    
+    return (
+        <div>
+          <h1 className="text-center">Local Brewerys</h1>
+          <div className="breweryList list-group text-center well">
+            {brewerysComponents}
+          </div>
+        </div>
+      )
   }
 
   _fetchBrewerys() {
@@ -64,22 +85,24 @@ class BeerApp extends React.Component {
     //console.log(beer.brewery);
 
     return this.state.brewerys.filter(beer => beer.streetAddress && beer.openToPublic == "Y" && beer.locationType != "office").map(beer => {
-      return <Brewery
+      return <BreweryItem
         key={Math.random()}
         name={beer.brewery.name}
         address={beer.streetAddress}
         zipcode={beer.postalCode}
         distance={beer.distance}
+        type={beer.locationType}
       />
     });
   }
 }
 
-class Brewery extends React.Component {
+class BreweryItem extends React.Component {
   render() {
     return (
         <a  className="list-group-item">
            <h4 className="list-group-item-heading">{this.props.name}</h4>
+           <p className="list-group-item-text">{this.props.type}</p>
            <p className="list-group-item-text">{this.props.address + ', ' + this.props.zipcode }</p>
            <p className="list-group-item-text">{`${this.props.distance} miles away`}</p>
         </a>
@@ -87,18 +110,10 @@ class Brewery extends React.Component {
   }
 }
 
-class BreweryList extends React.Component {
+class BrewerySearchView extends BeerApp {
   render() {
     return (
-
-      )
-  }
-}
-
-class BrewerySearch extends React.Component {
-  render() {
-    return (
-
+      <div></div>
       )
   }
 }
