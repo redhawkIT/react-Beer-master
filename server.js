@@ -33,15 +33,15 @@ app.use(function(req, res, next) {
 //"openToPublic": "Y"
 // micro,macro,nano,prewpub,production,office,tasting,restaurant,cidery,meadery
 
-app.get('/api/comments', function(req, res) {
-  fs.readFile(COMMENTS_FILE, function(err, data) {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    res.json(JSON.parse(data));
-  });
-});
+// app.get('/api/comments', function(req, res) {
+//   fs.readFile(COMMENTS_FILE, function(err, data) {
+//     if (err) {
+//       console.error(err);
+//       process.exit(1);
+//     }
+//     res.json(JSON.parse(data));
+//   });
+// });
 
 // app.get('/api/comments', function(req, res) {
 //   $.ajax({

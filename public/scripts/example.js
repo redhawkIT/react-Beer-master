@@ -60,31 +60,30 @@ constructor(props) {
 
   _requestLocation() {
 
-    var options = {enableHighAccuracy: false, timeout: 5000, maximumAge: 0};
+    //const options = {enableHighAccuracy: false, timeout: 5000, maximumAge: 0};
+    console.log("_requestLocation")
+    //navigator.geolocation.getCurrentPosition(this._success.bind(this));
 
     navigator.geolocation.getCurrentPosition(this._success.bind(this), error, options);
-
-
-    var error = err => console.log(err);
+    const error = err => console.log(err);
   }
 
   _success(pos) {
-    var long = pos.coords.longitude;
-    var lat = pos.coords.latitude;
+    const long = pos.coords.longitude;
+    const lat = pos.coords.latitude;
 
     console.log("long", long, "Lat", lat);
-    this.setState({latitude: lat, longitude: long})
-    //debugger
 
-    // send location data server
-    this._fetchBrewerysByLocation(); // change to promise
+    this.setState({latitude: lat, longitude: long})
+
+    this._fetchBrewerysByLocation();
 
   }
 
   _fetchBrewerysByLocation() {
     $.ajax({
       //url: '/api/comments',
-      url: `http://api.brewerydb.com/v2/search/geo/point?radius=25&lat=${this.state.latitude}&lng=${this.state.longitude}&key=a3112121a853b5030fb64addbc45e14a&callback=JSON_CALLBACK`,
+      url: `http://api.brewerydb.com/v2/search/geo/point?radius=25&lat=${this.state.latitude}&lng=${this.state.longitude}&key=a3112121a853b5030fb64addbc45e14a`,
       dataType: 'json',
       cache: false,
       success: (Data) => {
@@ -97,14 +96,10 @@ constructor(props) {
     });
   }
 
-
-
   _createBreweryComponents() {
-
-    // if(b.brewery.images) { brewery.icon = b.brewery.images.icon; }
-    console.log("_createBreweryComponents");
     //var icons = this.state.brewerys.filter(beer => beer.brewery.images);
     //console.log(icons.map(beer => beer.brewery.images.icon).length)
+    console.log(this.state.brewerys)
     return this.state.brewerys.filter(beer => beer.streetAddress && beer.openToPublic == "Y" && beer.locationType != "office" && beer.brewery.images).map(beer => {
       return <BreweryItem
         key={Math.random()}
@@ -124,26 +119,14 @@ class BreweryItem extends React.Component {
     return (
       <div>
           <div className="list-group breweryList">
-                  <a className="list-group-item" href="#">
-                    {this.props.name}
-                    <span className="distance pull-right">{`${this.props.distance} miles`}</span>
-                  </a>
+              <a className="list-group-item" href="#">
+                {this.props.name}
+                <span className="distance pull-right">{`${this.props.distance} miles`}</span>
+              </a>
           </div>
       </div>
       )
   }
 }
-
-
-class BrewerySearchView extends BeerApp {
-  render() {
-    return (
-      <div>Near Me</div>
-      )
-  }
-}
-
-
-
 
 ReactDOM.render( < BeerApp / > , document.getElementById('app'));
