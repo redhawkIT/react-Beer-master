@@ -8,7 +8,6 @@ class BeerApp extends React.Component {
     }
 
     render() {
-        //  { this.state.showResults ? <Results /> : null }
         return (
             <div className="container">
                 <div className="row">
@@ -63,36 +62,45 @@ class BreweryListView extends React.Component {
             timeout: 5000,
             maximumAge: 0
         };
-        
+
         navigator.geolocation.getCurrentPosition(this._success.bind(this), error, options);
-        const error = err => console.log(err);
+        const error = (err) => console.log('error ', err);
     }
 
     _success(pos) {
         this.setState({latitude: pos.coords.latitude, longitude: pos.coords.longitude})
-        this._fetchBrewerysByLocation();
+        $.ajax({
+            url: '/location',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                latitude: this.state.latitude,
+                longitude: this.state.longitude
+            }),
+            dataType: 'json',
+            success: this._fetchBrewerysByLocation.bind(this)
+        });
     }
 
-    _fetchBrewerysByLocation() {
-        $.ajax({
-            //url: '/api/comments',
-            url: `http://api.brewerydb.com/v2/search/geo/point?radius=25&lat=${this.state.latitude}&lng=${this.state.longitude}&key=a3112121a853b5030fb64addbc45e14a`,
-            dataType: 'json',
-            cache: false,
-            success: (Data) => {
-                console.log("DATA", Data)
-                this.setState({brewerys: Data.data});
-            },
-            error: err => console.log(err)
-        });
+    _fetchBrewerysByLocation(data) {
+      this.setState({brewerys: data.data});
     }
 
     _createBreweryComponents() {
         //var icons = this.state.brewerys.filter(beer => beer.brewery.images);
         //console.log(icons.map(beer => beer.brewery.images.icon).length)
         console.log(this.state.brewerys)
-        return this.state.brewerys.filter(beer => beer.streetAddress && beer.openToPublic == "Y" && beer.locationType != "office" && beer.brewery.images).map(beer => {
-            return <BreweryItem key={Math.random()} name={beer.brewery.name} address={beer.streetAddress} zipcode={beer.postalCode} distance={beer.distance} type={beer.locationType} icon={beer.brewery.images.icon}/>
+        return this.state.brewerys
+          .filter((beer) => beer.streetAddress && beer.openToPublic == "Y" && beer.locationType != "office" && beer.brewery.images)
+          .map((beer) => {
+            return <BreweryItem
+              key={Math.random()}
+              name={beer.brewery.name}
+              address={beer.streetAddress}
+              zipcode={beer.postalCode}
+              distance={beer.distance}
+              type={beer.locationType}
+              icon={beer.brewery.images.icon}/>
         });
     }
 }
