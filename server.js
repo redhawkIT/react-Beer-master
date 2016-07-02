@@ -1,11 +1,11 @@
-var request = require('request');
-var path = require('path');
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express();
+const request = require('request');
+const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const PORT = process.env.PORT || 1337;
 
-
-app.set('port', (process.env.PORT || 3000));
+app.set('port', PORT);
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
@@ -25,22 +25,15 @@ app.use(function(req, res, next) {
 });
 
 app.post('/location', function(req, res) {
-  const latitude = req.body.latitude;
-  const longitude = req.body.longitude;
-  const URL = `http://api.brewerydb.com/v2/search/geo/point?radius=25&lat=${latitude}&lng=${longitude}&key=a3112121a853b5030fb64addbc45e14a`;
-  console.log(latitude, longitude)
+  const URL = `http://api.brewerydb.com/v2/search/geo/point?radius=100&lat=${req.body.latitude}&lng=${req.body.longitude}&key=a3112121a853b5030fb64addbc45e14a`;
+  console.log(req.body.latitude, req.body.longitude)
 
   request(URL, function(error, response, body) {
     if (!error && response.statusCode == 200) {
-      var info = JSON.parse(body)
-      console.log(info)
-      res.send(info);
+      res.send(JSON.parse(body));
     }
   })
 
-
 });
 
-app.listen(app.get('port'), function() {
-  console.log('Server started: http://localhost:' + app.get('port') + '/');
-});
+app.listen(app.get('port'), () => console.log('Server started: http://localhost:' + app.get('port') + '/'));

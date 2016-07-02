@@ -32,17 +32,14 @@ class BreweryListView extends React.Component {
     }
 
     componentWillMount() {
-        // Invoked once, both on the client and server, immediately before the initial rendering occurs.
         this._getLocation();
     }
 
     render() {
-        const brewerysComponents = this._createBreweryComponents();
-
         return (
             <div>
                 <h1 className="text-center">Local Breweries</h1>
-                {brewerysComponents}
+                {this._createBreweryComponents()}
             </div>
         )
     }
@@ -87,9 +84,7 @@ class BreweryListView extends React.Component {
     }
 
     _createBreweryComponents() {
-        //var icons = this.state.brewerys.filter(beer => beer.brewery.images);
-        //console.log(icons.map(beer => beer.brewery.images.icon).length)
-        console.log(this.state.brewerys)
+        //console.log(this.state.brewerys)
         return this.state.brewerys
           .filter((beer) => beer.streetAddress && beer.openToPublic == "Y" && beer.locationType != "office" && beer.brewery.images)
           .map((beer) => {
