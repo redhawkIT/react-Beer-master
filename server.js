@@ -4,7 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
 
-var COMMENTS_FILE = path.join(__dirname, 'comments.json');
+//var COMMENTS_FILE = path.join(__dirname, 'comments.json');
 
 app.set('port', (process.env.PORT || 3000));
 
@@ -26,22 +26,6 @@ app.use(function(req, res, next) {
 });
 
 // http://api.brewerydb.com/v2/search/geo/point?radius=25&lat=30.2687782&lng=-97.7411321&key=a3112121a853b5030fb64addbc45e14a
-
-// locationType
-// DONT INCLUDE "locationType": "restaurant",
-// "locationType": "office"
-//"openToPublic": "Y"
-// micro,macro,nano,prewpub,production,office,tasting,restaurant,cidery,meadery
-
-// app.get('/api/comments', function(req, res) {
-//   fs.readFile(COMMENTS_FILE, function(err, data) {
-//     if (err) {
-//       console.error(err);
-//       process.exit(1);
-//     }
-//     res.json(JSON.parse(data));
-//   });
-// });
 
 // app.get('/api/comments', function(req, res) {
 //   $.ajax({
