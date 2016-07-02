@@ -1,55 +1,20 @@
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+There's a lot of good advice in this thread. I built a bare-bones React/Node example app that deploys to Heroku here: [https://github.com/alanbsmith/react-node-example](https://github.com/alanbsmith/react-node-example)
 
-# React Tutorial
+Major points:
 
-This is the React comment box example from [the React tutorial](http://facebook.github.io/react/docs/tutorial.html).
+- you need a server for production to serve your static content to the browser. I would recommend Express because it's really simple. Check out 
 
-## To use
+server.js in that example.
+- you will need to tell your app to listen on a port designated by Heroku when in production in your server file: 
 
-There are several simple server implementations included. They all serve static files from `public/` and handle requests to `/api/comments` to fetch or add data. Start a server with one of the following:
+var PORT = process.env.PORT || 8080
+- you'll want a 
 
-### Node
+postinstall script to compile all your JS/JSX/etc. Look at the postinstall script in
 
-```sh
-npm install
-node server.js
-```
+package.json
+- you'll probably want a way to uglify your JS in production and you'll need a separate webpack config file for that. See 
 
-### Python
+webpack.prod.config.js
 
-```sh
-pip install -r requirements.txt
-python server.py
-```
-
-### Ruby
-```sh
-ruby server.rb
-```
-
-### PHP
-```sh
-php server.php
-```
-
-### Go
-```sh
-go run server.go
-```
-
-### Perl
-
-```sh
-cpan Mojolicious
-perl server.pl
-```
-
-And visit <http://localhost:3000/>. Try opening multiple tabs!
-
-## Changing the port
-
-You can change the port number by setting the `$PORT` environment variable before invoking any of the scripts above, e.g.,
-
-```sh
-PORT=3001 node server.js
-```
+Hope that helps. Ping me if you have questions.

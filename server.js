@@ -24,8 +24,6 @@ app.use(function(req, res, next) {
   next();
 });
 
-// http://api.brewerydb.com/v2/search/geo/point?radius=25&lat=30.2687782&lng=-97.7411321&key=a3112121a853b5030fb64addbc45e14a
-
 app.post('/location', function(req, res) {
   const latitude = req.body.latitude;
   const longitude = req.body.longitude;
