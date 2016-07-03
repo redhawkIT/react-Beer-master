@@ -38,7 +38,7 @@ class BreweryListView extends React.Component {
     render() {
         return (
             <div>
-                <h1 className="text-center">Local Breweries</h1>
+                <h1 className="text-center">Drink Local</h1>
                 {this._createBreweryComponents()}
             </div>
         )
@@ -87,9 +87,9 @@ class BreweryListView extends React.Component {
         //console.log(this.state.brewerys)
         return this.state.brewerys
           .filter((beer) => beer.streetAddress && beer.openToPublic == "Y" && beer.locationType != "office" && beer.brewery.images)
-          .map((beer) => {
+          .map((beer, index) => {
             return <BreweryItem
-              key={Math.random()}
+              key={index}
               name={beer.brewery.name}
               address={beer.streetAddress}
               zipcode={beer.postalCode}
